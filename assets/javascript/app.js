@@ -134,6 +134,19 @@ $(document).ready(function () {
         writeQuestions();
     });
 
+    //on click event for radio buttons ***does not work***
+    $("<input>").on("click", function() {
+        if ($(this).value === $(this).triviaQuestions.answer) {
+            correct++;
+        }
+        else if ($(this).value == "") {
+            unanswered++;
+        }
+        else {
+            incorrect++;
+        };
+    });
+
     //stop timer when it hits 0, reset and display results ***does not work***
     if (timer === 0) {
         clearInterval(myTimer);
