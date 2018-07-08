@@ -80,9 +80,9 @@ $(document).ready(function () {
     function writeQuestions() {
 
         for(i = 0; i < triviaQuestions.length; i++) {
-            $("#questions").append("<form>" + triviaQuestions[i].question + "<br><input type='radio' name='answers' data-value='0'>" + 
-            triviaQuestions[i].answerList[0] + "<input type='radio' name='answers' data-value='1'>" + triviaQuestions[i].answerList[1] + 
-            "<input type='radio' name='answers' data-value='2'>" + triviaQuestions[i].answerList[2] + "<input type='radio' name='answers' data-value='3'>" + 
+            $("#questions").append("<form>" + triviaQuestions[i].question + "<br><input type='radio' name='answers' class='answers' data-value='0'>" + 
+            triviaQuestions[i].answerList[0] + "<input type='radio' name='answers' class='answers' data-value='1'>" + triviaQuestions[i].answerList[1] + 
+            "<input type='radio' name='answers' class='answers' data-value='2'>" + triviaQuestions[i].answerList[2] + "<input type='radio' name='answers' class='answers' data-value='3'>" + 
             triviaQuestions[i].answerList[3] + "</form><br><br>");
         };
         //adding a finished button after all questions and answers
@@ -94,6 +94,16 @@ $(document).ready(function () {
         clearInterval(myTimer);
         $("#timer").empty();
         timer = 30;
+        var playerChoice = $(".answers:checked");
+        console.log(playerChoice);
+        console.log(playerChoice[0].dataset.value);
+        for (i = 0; i < triviaQuestions.length; i++) {
+            if (triviaQuestions[i].answer === playerChoice[i].dataset.value) {
+                correct++;
+            } else {
+                incorrect++;
+            };
+        };
         $("#questions").html("Correct answers: " + correct + "<br>Incorrect answers: " + incorrect + "<br>Unanswered questions: " + unanswered + "<br><br><button id='replay'>Replay</button>");
     };
 
@@ -108,20 +118,7 @@ $(document).ready(function () {
         };
     });
 
-    //on click event for radio buttons ***does not work***
-    $("<input>").on("click", function() {
-        if ($(this).value === $(this).triviaQuestions.answer) {
-            correct++;
-        }
-        else if ($(this).value == "") {
-            unanswered++;
-        }
-        else {
-            incorrect++;
-        };
-    });
-
-    //on click events for finished and replay buttons ***does not work ***
+    //on click events for finished and replay buttons using document to avoid event bubbling issue
     $(document).on("click", "#finished", function() {
         tallyResults();
     });
