@@ -70,68 +70,42 @@ $(document).ready(function () {
 	    answer: 2
     }];
 
-    /*attempt 1
-    //start button on click event
-    $("#start").on("click", function startClicked() {
-
-        //start button replaces itself with a 30 second timer
-        setInterval(function startTimer() {
-            timer--;
-            $("#start").html("<p id='timer'>Time Remaining: " + timer + " seconds</p><br>");
-        }, 1000);
-        
-        //generate the question and possible answers
-        $("#questions").html("<p id='currentQuestion'>" + triviaQuestions[currentQuestion].question + "</p><br><p class='answers'>" + triviaQuestions[currentQuestion].answerList[0] + "</p><br><p class='answers'>" + triviaQuestions[currentQuestion].answerList[1] + "</p><br><p class='answers'>" + triviaQuestions[currentQuestion].answerList[2] + "</p><br><p class='answers'>" + triviaQuestions[currentQuestion].answerList[3]);
-        
-        //end timer and generate next question
-        if (timer < 1) {
-            currentQuestion++;
-            clearInterval(startTimer);
-            timer = 10;
-            startTimer();
-            $("#questions").html("<p id='currentQuestion'>" + triviaQuestions[currentQuestion].question + "</p><br><p class='answers'>" + triviaQuestions[currentQuestion].answerList[0] + "</p><br><p class='answers'>" + triviaQuestions[currentQuestion].answerList[1] + "</p><br><p class='answers'>" + triviaQuestions[currentQuestion].answerList[2] + "</p><br><p class='answers'>" + triviaQuestions[currentQuestion].answerList[3]);
-            console.log(currentQuestion);
-        };
-    });*/
-
-    /*attempt 2
-    function generateQuestions () {
-        for (i = 0; i < triviaQuestions.length; i++) {
-            $("#questions").append("<input id='currentQuestion'>" + triviaQuestions[currentQuestion].question + "</p><br><p class='answers'>" + triviaQuestions[currentQuestion].answerList[0] + "</p><br><p class='answers'>" + triviaQuestions[currentQuestion].answerList[1] + "</p><br><p class='answers'>" + triviaQuestions[currentQuestion].answerList[2] + "</p><br><p class='answers'>" + triviaQuestions[currentQuestion].answerList[3])
-        };
-    };
-
-    $("#start").on("click", function startClicked() {
-        generateQuestions();
-        setInterval(function startTimer() {
-            timer--;
-            $("#start").html("<p id='timer'>Time Remaining: " + timer + " seconds</p><br>");
-        }, 1000);
-    });*/
-
     //function to start time
     function startTimer() {
         timer --;
-        $("#timer").html("<hr><p>Time Remaining: " + timer + " seconds</p>")
+        $("#timer").text("Time Remaining: " + timer + " seconds")
     };
 
     //function to write out the questions, possible answers, and finished button
     function writeQuestions() {
+
         for(i = 0; i < triviaQuestions.length; i++) {
-            $("#questions").append("<form>" + triviaQuestions[i].question + "<br><input type='radio' name='answers' value='0'>" + 
-            triviaQuestions[i].answerList[0] + "<input type='radio' name='answers' value='1'>" + triviaQuestions[i].answerList[1] + 
-            "<input type='radio' name='answers' value='2'>" + triviaQuestions[i].answerList[2] + "<input type='radio' name='answers' value='3'>" + 
+            $("#questions").append("<form>" + triviaQuestions[i].question + "<br><input type='radio' name='answers' data-value='0'>" + 
+            triviaQuestions[i].answerList[0] + "<input type='radio' name='answers' data-value='1'>" + triviaQuestions[i].answerList[1] + 
+            "<input type='radio' name='answers' data-value='2'>" + triviaQuestions[i].answerList[2] + "<input type='radio' name='answers' data-value='3'>" + 
             triviaQuestions[i].answerList[3] + "</form><br><br>");
         };
         //adding a finished button after all questions and answers
         $("#questions").append("<button id='finished'>Finished</button>");
     };
 
+    //function to stop and reset timer, tally results and generate replay button
+    function tallyResults() {
+        clearInterval(myTimer);
+        $("#timer").empty();
+        timer = 30;
+        $("#questions").html("Correct answers: " + correct + "<br>Incorrect answers: " + incorrect + "<br>Unanswered questions: " + unanswered + "<br><br><button id='replay'>Replay</button>");
+    };
+
     //on click event for start button
-    $("#start").on("click", function () {
+    $("#start").on("click", function() {
         $("#inner_container").html("<div id='questions'></div>");
         myTimer = setInterval(startTimer, 1000);
         writeQuestions();
+        if (timer < 1) {
+            console.log("timeout")
+            tallyResults();
+        };
     });
 
     //on click event for radio buttons ***does not work***
@@ -147,25 +121,14 @@ $(document).ready(function () {
         };
     });
 
-    //stop timer when it hits 0, reset and display results ***does not work***
-    if (timer === 0) {
-        clearInterval(myTimer);
-        $("#timer").empty();
-        timer = 30;
-        $("#questions").html("Correct answers: " + correct + "<br>Incorrect answers: " + incorrect + "<br>Unanswered questions: " + unanswered + "<br><button id='replay'>Replay</button>");
-    };
-
     //on click events for finished and replay buttons ***does not work ***
-    $("#finished").on("click", function tallyResults() {
-        clearInterval(myTimer);
-        $("#timer").empty();
-        timer = 30;
-        $("#questions").html("Correct answers: " + correct + "<br>Incorrect answers: " + incorrect + "<br>Unanswered questions: " + unanswered + "<br><button id='replay'>Replay</button>");
+    $(document).on("click", "#finished", function() {
+        tallyResults();
     });
-    $("#replay").on("click", function replayGame() {
-        clearInterval(myTimer);
-        $("#timer").empty();
-        timer = 30;
+
+    //set on click event for replay button using document to avoid event bubbling issue
+    $(document).on("click", "#replay", function() {
+        $("#questions").empty();
         writeQuestions();
         startTimer();
     });
