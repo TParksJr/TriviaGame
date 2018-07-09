@@ -72,13 +72,16 @@ $(document).ready(function () {
 
     //function to start time
     function startTimer() {
-        timer --;
-        $("#timer").text("Time Remaining: " + timer + " seconds")
+        if (timer > 1) {
+            timer --;
+            $("#timer").text("Time Remaining: " + timer + " seconds")
+        } else {
+            tallyResults();
+        };
     };
 
     //function to write out the questions, possible answers, and finished button
     function writeQuestions() {
-
         for(i = 0; i < triviaQuestions.length; i++) {
             $("#questions").append("<form>" + triviaQuestions[i].question + "<br><input type='radio' name='answers' class='answers' data-value='0'>" + 
             triviaQuestions[i].answerList[0] + "<input type='radio' name='answers' class='answers' data-value='1'>" + triviaQuestions[i].answerList[1] + 
@@ -95,27 +98,24 @@ $(document).ready(function () {
         $("#timer").empty();
         timer = 30;
         var playerChoice = $(".answers:checked");
-        console.log(playerChoice);
-        console.log(playerChoice[0].dataset.value);
-        for (i = 0; i < triviaQuestions.length; i++) {
-            if (triviaQuestions[i].answer === playerChoice[i].dataset.value) {
+        for (i = 0; i < playerChoice.length; i++) {
+            if (triviaQuestions[i].answer == $(playerChoice[i]).attr("data-value")) {
                 correct++;
             } else {
                 incorrect++;
             };
         };
+        unanswered = triviaQuestions.length - playerChoice.length;
         $("#questions").html("Correct answers: " + correct + "<br>Incorrect answers: " + incorrect + "<br>Unanswered questions: " + unanswered + "<br><br><button id='replay'>Replay</button>");
+        correct = 0;
+        incorrect = 0;
     };
 
     //on click event for start button
     $("#start").on("click", function() {
-        $("#inner_container").html("<div id='questions'></div>");
         myTimer = setInterval(startTimer, 1000);
+        $("#inner_container").html("<div id='questions'></div>");
         writeQuestions();
-        if (timer < 1) {
-            console.log("timeout")
-            tallyResults();
-        };
     });
 
     //on click events for finished and replay buttons using document to avoid event bubbling issue
@@ -129,4 +129,11 @@ $(document).ready(function () {
         writeQuestions();
         startTimer();
     });
+
+    //on click event for answer buttons using document to avoid event bubbling issue
+    /*$(document).on("click", ".answers", function() {
+        var selection = $(this).attr("data-value");
+        console.log(selection);
+        if (selection === )
+    });*/
 });
