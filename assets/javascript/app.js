@@ -1,6 +1,6 @@
 $(document).ready(function () {
 
-    //declare variables
+    //declare variables and set variables
     var timer = 31,
         correct = 0,
         incorrect = 0,
@@ -70,7 +70,7 @@ $(document).ready(function () {
 	    answer: 2
     }];
 
-    //function to start time
+    //function to start timer and tally results at zero seconds
     function startTimer() {
         if (timer > 1) {
             timer --;
@@ -92,7 +92,7 @@ $(document).ready(function () {
         $("#questions").append("<button id='finished'>Finished</button>");
     };
 
-    //function to stop and reset timer, tally results and generate replay button
+    //function to stop and reset timer, tally results, generate replay button and reset correct/incorrect
     function tallyResults() {
         clearInterval(myTimer);
         $("#timer").empty();
@@ -129,11 +129,4 @@ $(document).ready(function () {
         writeQuestions();
         startTimer();
     });
-
-    //on click event for answer buttons using document to avoid event bubbling issue
-    /*$(document).on("click", ".answers", function() {
-        var selection = $(this).attr("data-value");
-        console.log(selection);
-        if (selection === )
-    });*/
 });
